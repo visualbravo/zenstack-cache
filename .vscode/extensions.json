@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "TypeScriptTeam.native-preview",
+    "ms-azuretools.vscode-containers",
+    "tamasfe.even-better-toml",
+    "oven.bun-vscode",
+    "oxc.oxc-vscode",
+    "ckolkman.vscode-postgres",
+    "vitest.explorer"
+  ]
+}

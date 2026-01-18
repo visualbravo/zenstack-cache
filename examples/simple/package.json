@@ -1,0 +1,27 @@
+{
+  "name": "simple",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun ./src/index.ts",
+    "build": "tsdown",
+    "watch": "tsdown --watch",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix --fix-suggestions",
+    "format:fix": "oxfmt",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "@visualbravo/zenstack-live": "workspace:*",
+    "@zenstackhq/orm": "catalog:",
+    "pg": "catalog:",
+    "kysely": "catalog:"
+  },
+  "devDependencies": {
+    "@types/pg": "catalog:",
+    "@zenstackhq/schema": "catalog:",
+    "@zenstack-live/config": "workspace:*"
+  },
+  "packageManager": "bun@1.3.6"
+}

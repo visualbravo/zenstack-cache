@@ -1,0 +1,12 @@
+{
+  "extends": "@zenstack-live/config/ts",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "customConditions": [],
+    "paths": {
+      "*": ["./*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

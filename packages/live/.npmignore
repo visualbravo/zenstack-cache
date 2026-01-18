@@ -1,0 +1,5 @@
+*
+!dist
+!dist/**/*
+!LICENSE
+dist/_virtual/rolldown_runtime.cjs

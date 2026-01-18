@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "arrowParens": "avoid",
+  "semi": false,
+  "singleAttributePerLine": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "useTabs": false,
+  "insertFinalNewline": true,
+  "jsxSingleQuote": true,
+  "trailingComma": "all",
+    "ignorePatterns": [
+    "**/dist/*",
+    "**/.next/*",
+    "**/.turbo/*",
+    "**/.out/*",
+    "**/.nitro/*",
+    "packages/database/src/.generated/*",
+    "packages/ui/src/*",
+    "apps/next/src/payload/types.ts",
+    "apps/next/src/app/(payload)/*",
+    "apps/start/.wrangler/*",
+    "apps/start/src/routeTree.gen.ts"
+  ],
+}

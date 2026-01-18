@@ -1,0 +1,66 @@
+name: Publish Package
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container: node:22
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+          POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:5.0
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
+      - name: Install system dependencies  
+        run: |
+          apt-get update
+          apt-get install -y unzip
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install project dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build
+
+      - name: Test
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+          POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/postgres
+          REDIS_URL: redis://redis:6379
+        run: bun run test
+      
+      - name: Publish package
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
+        run: cd ./packages/live && bun publish --access public
