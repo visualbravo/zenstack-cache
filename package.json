@@ -22,7 +22,7 @@
     "oxlint": "1.35.0",
     "tsdown": "0.18.3",
     "turbo": "2.7.2",
-    "typescript": "5.9.3",
+    "typescript": "catalog:",
     "vitest": "4.0.17"
   },
   "workspaces": {
@@ -31,7 +31,6 @@
     ],
     "catalog": {
       "@zenstackhq/orm": "canary",
-      "@zenstackhq/schema": "canary",
       "zod": "^4.1.0",
       "kysely": "~0.28.8",
       "ioredis": "^5.0.0",

@@ -8,6 +8,4 @@
   "[javascript][javascriptreact][typescript][typescriptreact][json][jsonc]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
-  "vscode-postgres.defaultConnection": "postgres",
-  "vscode-postgres.defaultDatabase": "postgres",
 }

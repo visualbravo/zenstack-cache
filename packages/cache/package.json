@@ -87,7 +87,6 @@
   },
   "dependencies": {
     "ioredis": "catalog:",
-    "lossless-json": "^4.0.1",
     "murmurhash": "^2.0.1",
     "stable-hash": "^0.0.6",
     "zod": "catalog:"
@@ -99,8 +98,7 @@
     "@types/better-sqlite3": "7.6.13"
   },
   "peerDependencies": {
-    "@zenstackhq/orm": "catalog:",
-    "@zenstackhq/schema": "catalog:"
+    "@zenstackhq/orm": "catalog:"
   },
   "packageManager": "bun@1.3.6"
 }

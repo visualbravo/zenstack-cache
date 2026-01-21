@@ -1,7 +1,6 @@
 name: zenstack-cache
 
 volumes:
-  postgres-data:
   redis-data:
   redis-insight:
 
