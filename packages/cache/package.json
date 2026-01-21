@@ -86,7 +86,6 @@
     "test:watch": "vitest --watch"
   },
   "dependencies": {
-    "decimal.js": "catalog:",
     "ioredis": "catalog:",
     "lossless-json": "^4.0.1",
     "murmurhash": "^2.0.1",
@@ -94,7 +93,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/pg": "catalog:",
     "@zenstack-cache/config": "workspace:*",
     "kysely": "catalog:",
     "better-sqlite3": "12.6.2",
