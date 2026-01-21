@@ -1,0 +1,108 @@
+{
+  "name": "@visualbravo/zenstack-cache",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "@zenstack-cache/source": "./src/index.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    },
+    "./plugin": {
+      "@zenstack-cache/source": "./src/plugin.ts",
+      "require": "./dist/plugin.cjs",
+      "import": "./dist/plugin.mjs"
+    },
+    "./providers/memory": {
+      "@zenstack-cache/source": "./src/providers/memory.ts",
+      "require": "./dist/providers/memory.cjs",
+      "import": "./dist/providers/memory.mjs"
+    },
+    "./providers/redis": {
+      "@zenstack-cache/source": "./src/providers/redis.ts",
+      "require": "./dist/providers/redis.cjs",
+      "import": "./dist/providers/redis.mjs"
+    },
+    "./schemas": {
+      "@zenstack-cache/source": "./src/schemas.ts",
+      "require": "./dist/schemas.cjs",
+      "import": "./dist/schemas.mjs"
+    },
+    "./types": {
+      "@zenstack-cache/source": "./src/types.ts",
+      "require": "./dist/types.cjs",
+      "import": "./dist/types.mjs"
+    },
+    "./utils": {
+      "@zenstack-cache/source": "./src/utils.ts",
+      "require": "./dist/utils.cjs",
+      "import": "./dist/utils.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.mjs"
+      },
+      "./plugin": {
+        "require": "./dist/plugin.cjs",
+        "import": "./dist/plugin.mjs"
+      },
+      "./providers/memory": {
+        "require": "./dist/providers/memory.cjs",
+        "import": "./dist/providers/memory.mjs"
+      },
+      "./providers/redis": {
+        "require": "./dist/providers/redis.cjs",
+        "import": "./dist/providers/redis.mjs"
+      },
+      "./schemas": {
+        "require": "./dist/schemas.cjs",
+        "import": "./dist/schemas.mjs"
+      },
+      "./types": {
+        "require": "./dist/types.cjs",
+        "import": "./dist/types.mjs"
+      },
+      "./utils": {
+        "require": "./dist/utils.cjs",
+        "import": "./dist/utils.mjs"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "watch": "tsdown --watch",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix --fix-suggestions",
+    "format:fix": "oxfmt",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "decimal.js": "catalog:",
+    "ioredis": "catalog:",
+    "lossless-json": "^4.0.1",
+    "murmurhash": "^2.0.1",
+    "stable-hash": "^0.0.6",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/pg": "catalog:",
+    "@zenstack-cache/config": "workspace:*",
+    "kysely": "catalog:",
+    "better-sqlite3": "12.6.2",
+    "@types/better-sqlite3": "7.6.13"
+  },
+  "peerDependencies": {
+    "@zenstackhq/orm": "catalog:",
+    "@zenstackhq/schema": "catalog:"
+  },
+  "packageManager": "bun@1.3.6"
+}

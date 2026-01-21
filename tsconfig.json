@@ -21,7 +21,7 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": true,
     "isolatedModules": true,
-    "customConditions": ["@zenstack-live/source"]
+    "customConditions": ["@zenstack-cache/source"]
   },
   "exclude": ["**/dist", "**/node_modules"]
 }

@@ -8,6 +8,6 @@ export default defineConfig({
   unbundle: true,
 
   exports: {
-    devExports: '@zenstack-live/source',
+    devExports: '@zenstack-cache/source',
   },
 })

@@ -1,7 +1,4 @@
-# 🟢 represents things you will likely need to add.
-# 🟠 represents things you will likely want to change.
-
-name: zenstack-live
+name: zenstack-cache
 
 volumes:
   postgres-data:
@@ -13,72 +10,9 @@ networks:
     external: false
 
 services:
-  postgres:
-    container_name: zenstack-live-postgres
-    image: postgres:10.0
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    env_file: ./.env
-    networks:
-      - workspace
-
-    # 🟢
-    command:
-      - "postgres"
-      - "-c"
-      - "wal_level=logical"
-  
-    ports:
-      - 5432:5432
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  debezium:
-    container_name: zenstack-live-debezium
-    image: debezium/server:3.0.0.Final
-    depends_on:
-      - postgres
-      - redis
-    environment:
-      DATABASE_USER: default
-      DEBEZIUM_FORMAT_SCHEMAS_ENABLE: false
-      DEBEZIUM_SINK_REDIS_ADDRESS: redis:6379 # 🟠
-      DEBEZIUM_SINK_REDIS_PASSWORD: # 🟠
-      DEBEZIUM_SINK_REDIS_SSL_ENABLED: false
-      DEBEZIUM_SINK_REDIS_WAIT_RETRY_ENABLED: true
-      DEBEZIUM_SINK_TYPE: redis
-      DEBEZIUM_SOURCE_CONNECTOR_CLASS: io.debezium.connector.postgresql.PostgresConnector
-      DEBEZIUM_SOURCE_DATABASE_DBNAME: postgres # 🟠
-      DEBEZIUM_SOURCE_DATABASE_HOSTNAME: postgres # 🟠
-      DEBEZIUM_SOURCE_DATABASE_PASSWORD: postgres # 🟠
-      DEBEZIUM_SOURCE_DATABASE_PORT: 5432 # 🟠
-      DEBEZIUM_SOURCE_DATABASE_SERVER_NAME: zenstack
-      DEBEZIUM_SOURCE_DATABASE_USER: postgres # 🟠
-      DEBEZIUM_SOURCE_PLUGIN_NAME: pgoutput
-      DEBEZIUM_SOURCE_SCHEMA_WHITELIST: public
-      DEBEZIUM_SOURCE_SNAPSHOT_MODE: no_data
-      DEBEZIUM_SOURCE_TOPIC_PREFIX: zenstack.table
-      DEBEZIUM_SOURCE_SCHEMA_HISTORY_INTERNAL: io.debezium.storage.redis.history.RedisSchemaHistory
-      DEBEZIUM_SOURCE_OFFSET_STORAGE: io.debezium.storage.redis.offset.RedisOffsetBackingStore
-      DEBEZIUM_SOURCE_OFFSET_STORAGE_REDIS_KEY: zenstack.metadata.offsets
-      SCHEMA_INCLUDE_LIST: public
-    networks:
-      - workspace
-    ports:
-      - 8080:8080
-      - 8083:8083
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/q/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   redis:
-    container_name: zenstack-live-redis
-    image: redis:5.0
+    container_name: zenstack-cache-redis
+    image: redis:3.0
     command: redis-server
     networks:
       - workspace
@@ -90,10 +24,9 @@ services:
       timeout: 5s
       retries: 5
   
-  # Below is dev stuff for the project, you don't need it.
   workspace:
-    container_name: zenstack-live-workspace
-    image: mcr.microsoft.com/devcontainers/javascript-node:22
+    container_name: zenstack-cache-workspace
+    image: mcr.microsoft.com/devcontainers/javascript-node:20
     volumes:
       - ..:/workspace:cached
     env_file: ./.env
@@ -102,7 +35,7 @@ services:
       - workspace
 
   redis-insight:
-    container_name: zenstack-live-redis-insight
+    container_name: zenstack-cache-redis-insight
     image: redis/redisinsight:3.0
     depends_on:
       - redis

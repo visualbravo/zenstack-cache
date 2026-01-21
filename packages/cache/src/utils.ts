@@ -1,0 +1,17 @@
+import type { CacheEntry } from './types'
+
+export function getTotalTtl(entry: CacheEntry) {
+  return (entry.options.ttl ?? 0) + (entry.options.swr ?? 0)
+}
+
+export function entryIsFresh(entry: CacheEntry) {
+  return entry.options.ttl ? Date.now() <= entry.createdAt + (entry.options.ttl ?? 0) * 1000 : false
+}
+
+export function entryIsStale(entry: CacheEntry) {
+  return entry.options.swr ? Date.now() <= entry.createdAt + getTotalTtl(entry) * 1000 : false
+}
+
+export function entryIsExpired(entry: CacheEntry) {
+  return Date.now() > entry.createdAt + getTotalTtl(entry) * 1000
+}

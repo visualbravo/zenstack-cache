@@ -24,89 +24,39 @@ export class SchemaType implements SchemaDef {
           ],
           default: ExpressionUtils.call('cuid'),
         },
-        string: {
-          name: 'string',
-          type: 'String',
-          optional: true,
-        },
-        stringArray: {
-          name: 'stringArray',
-          type: 'String',
-          array: true,
-          optional: true,
-        },
-        boolean: {
-          name: 'boolean',
-          type: 'Boolean',
-          optional: true,
-        },
-        booleanArray: {
-          name: 'booleanArray',
-          type: 'Boolean',
-          array: true,
-          optional: true,
-        },
-        int: {
-          name: 'int',
-          type: 'Int',
-          optional: true,
-        },
-        intArray: {
-          name: 'intArray',
-          type: 'Int',
-          array: true,
-          optional: true,
-        },
-        float: {
-          name: 'float',
-          type: 'Float',
-          optional: true,
-        },
-        floatArray: {
-          name: 'floatArray',
-          type: 'Float',
-          optional: true,
-          array: true,
-        },
-        dateTime: {
-          name: 'dateTime',
+        createdAt: {
+          name: 'createdAt',
           type: 'DateTime',
+          attributes: [
+            { name: '@default', args: [{ name: 'value', value: ExpressionUtils.call('now') }] },
+          ],
+          default: ExpressionUtils.call('now'),
+        },
+        updatedAt: {
+          name: 'updatedAt',
+          type: 'DateTime',
+          updatedAt: true,
+          attributes: [{ name: '@updatedAt' }],
+        },
+        email: {
+          name: 'email',
+          type: 'String',
+          unique: true,
+          attributes: [{ name: '@unique' }],
+        },
+        name: {
+          name: 'name',
+          type: 'String',
           optional: true,
         },
-        // dateTimeArray: {
-        //   name: 'dateTime',
-        //   type: 'DateTime',
-        //   optional: true,
-        //   array: true,
-        // },
-        bigInt: {
-          name: 'bigInt',
-          type: 'BigInt',
-          optional: true,
-        },
-        bigIntArray: {
-          name: 'bigIntArray',
-          type: 'BigInt',
-          optional: true,
-          array: true,
-        },
-        enum: {
-          name: 'enum',
+        role: {
+          name: 'role',
           type: 'Role',
           attributes: [
             { name: '@default', args: [{ name: 'value', value: ExpressionUtils.literal('USER') }] },
           ],
           default: 'USER',
         },
-        // enumArray: {
-        //   name: 'enumArray',
-        //   type: 'Role',
-        //   array: true,
-        //   attributes: [
-        //     { name: '@default', args: [{ name: 'value', value: ExpressionUtils.literal('USER') }] },
-        //   ],
-        //   default: 'USER',
-        // },
         posts: {
           name: 'posts',
           type: 'Post',
@@ -119,8 +69,8 @@ export class SchemaType implements SchemaDef {
           optional: true,
           relation: { opposite: 'user' },
         },
-        json: {
-          name: 'json',
+        meta: {
+          name: 'meta',
           type: 'Json',
           optional: true,
         },
@@ -158,6 +108,7 @@ export class SchemaType implements SchemaDef {
       idFields: ['id'],
       uniqueFields: {
         id: { type: 'String' },
+        email: { type: 'String' },
       },
     },
     Post: {
