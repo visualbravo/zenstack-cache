@@ -49,20 +49,24 @@ export class RedisCacheProvider implements CacheProvider {
 
   async invalidate(options: CacheInvalidationOptions) {
     if (options.tags && options.tags.length > 0) {
-      await Promise.all(options.tags.map(tag => {
-        return new Promise((resolve, reject) => {
-          const stream = this.redis.sscanStream(formatTagKey(tag), {
-            count: 100,
-          })
+      await Promise.all(
+        options.tags.map(tag => {
+          return new Promise((resolve, reject) => {
+            const stream = this.redis.sscanStream(formatTagKey(tag), {
+              count: 100,
+            })
 
-          stream.on('data', async (keys: string[]) => {
-            await this.redis.del(...keys)
-          })
+            stream.on('data', async (keys: string[]) => {
+              if (keys.length > 1) {
+                await this.redis.del(...keys)
+              }
+            })
 
-          stream.on('error', reject)
-          stream.on('end', resolve)
-        })
-      }))
+            stream.on('error', reject)
+            stream.on('end', resolve)
+          })
+        }),
+      )
     }
   }
 
@@ -73,8 +77,10 @@ export class RedisCacheProvider implements CacheProvider {
         match: 'zenstack:cache:*',
       })
 
-      stream.on('data', async keys => {
-        await this.redis.del(...keys)
+      stream.on('data', async (keys: string[]) => {
+        if (keys.length > 1) {
+          await this.redis.del(...keys)
+        }
       })
 
       stream.on('error', reject)
