@@ -34,7 +34,7 @@
 
 * ZenStack (version >= `canary`)
 * Node.js (version >= `20.0.0`)
-* Redis that supports [Lua scripting](https://redis.io/docs/latest/develop/programmability/eval-intro/) (version >= `2.6.0`)
+* Redis (version >= `7.0.0`)
   * ℹ️ Only if you intend to use the `RedisCacheProvider`
 
 ## Installation
@@ -55,22 +55,23 @@ import { RedisCacheProvider } from '@visualbravo/zenstack-cache/providers/redis'
 import { MemoryCacheProvider } from '@visualbravo/zenstack-cache/providers/memory'
 
 const client = new ZenStackClient(schema, {
-  ...
-})
-
-const extendedClient = client.$use(
+  dialect: ...,
+}).$use(
   defineCachePlugin({
     // Choose only one provider.
+
+    // 1️⃣
     provider: new RedisCacheProvider({
       url: process.env['REDIS_URL'],
     }),
 
+    // 2️⃣
     provider: new MemoryCacheProvider(),
   }),
 )
 
 async function getPostsPublishedByUser(userId: string) {
-  const publishedPosts = await extendedClient.post.findMany({
+  const publishedPosts = await client.post.findMany({
     where: {
       published: true,
       authorId: 1,
@@ -94,12 +95,12 @@ You can easily invalidate multiple cache entries.
 
 ```typescript
 // Invalidate specific tags.
-await extendedClient.$cache.invalidate({
+await client.$cache.invalidate({
   tags: ['user:1'],
 })
 
 // Invalidate everything.
-await extendedClient.$cache.invalidateAll()
+await client.$cache.invalidateAll()
 ```
 
 ## Cache Status
@@ -107,14 +108,14 @@ await extendedClient.$cache.invalidateAll()
 After performing a query, you can check where the result came from.
 
 ```typescript
-const publishedPostsStatus = extendedClient.$cache.status // 'hit' | 'miss' | 'stale'
+const publishedPostsStatus = client.$cache.status // 'hit' | 'miss' | 'stale'
 ```
 
 ## Revalidation
 
 If the result was stale, you can choose to await its revalidation.
 ```typescript
-const revalidatedPublishedPosts = await extendedClient.$cache.revalidation as Post[]
+const revalidatedPublishedPosts = await client.$cache.revalidation as Post[]
 ```
 
 ## Cache Options

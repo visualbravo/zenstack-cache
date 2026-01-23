@@ -9,20 +9,6 @@ networks:
     external: false
 
 services:
-  redis:
-    container_name: zenstack-cache-redis
-    image: redis:3.0
-    command: redis-server
-    networks:
-      - workspace
-    ports:
-      - 6379:6379
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-  
   workspace:
     container_name: zenstack-cache-workspace
     image: mcr.microsoft.com/devcontainers/javascript-node:20
@@ -32,6 +18,22 @@ services:
     command: sleep infinity
     networks:
       - workspace
+
+  redis:
+    container_name: zenstack-cache-redis
+    image: redis:7.0
+    command: redis-server
+    networks:
+      - workspace
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis-insight:
     container_name: zenstack-cache-redis-insight
