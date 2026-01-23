@@ -1042,6 +1042,6 @@ describe('Cache plugin (redis)', () => {
       },
     })
 
-    expect(sadd.mock.lastCall!).toBe('zenstack:cache:tag:test')
+    expect(sadd.mock.lastCall![0]).toBe('zenstack:cache:tag:test')
   })
 })
