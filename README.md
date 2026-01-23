@@ -4,7 +4,7 @@
     <small>(beta)</small>
   </h1>
 
-  Give your ZenStack app a boost with query caching integrated at the ORM level.
+  Reduce response times and database load with query-level caching integrated with the ZenStack ORM.
 </div>
 
 <div align="center">
@@ -28,7 +28,7 @@
 
 ## Features
 * 🌐 **Redis Caching:** Centralizes your caching to scale across different systems.
-* 🖥️ **Memory Caching:** Simplifies caching where scale is not a concern.
+* 🖥️ **Memory Caching:** Simplifies caching when scale is not a concern.
 
 ## Requirements
 
@@ -111,6 +111,10 @@ After performing a query, you can check where the result came from.
 const publishedPostsStatus = client.$cache.status // 'hit' | 'miss' | 'stale'
 ```
 
+* `hit` - a cache entry in the `ttl` window was found, and the database was not queried.
+* `miss` - a cache entry was not found, and the database was queried.
+* `stale` - a cache entry in the `swr` window was found, and the database was queried in the background to revalidate it.
+
 ## Revalidation
 
 If the result was stale, you can choose to await its revalidation.
@@ -124,7 +128,7 @@ const revalidatedPublishedPosts = await client.$cache.revalidation as Post[]
 * `swr` reduces response times by serving cached results, but does not reduce database load because it performs a revalidation in the background after each request.
 
 > [!NOTE]
-> The total TTL of a cache entry is equal to its `ttl` + `swr`
+> The total TTL of a cache entry is equal to its `ttl` + `swr`. The `ttl` window comes first, followed by the `swr` window.
 
 You can combine the two options to best suit the needs of your application.
 
