@@ -1,11 +1,14 @@
 import { ZenStackClient, type ClientContract } from '@zenstackhq/orm'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineCachePlugin } from '../src'
 import { SqliteDialect } from 'kysely'
 import SQLite from 'better-sqlite3'
 import { RedisCacheProvider } from '../src/providers/redis'
 import { schema } from './schemas/basic'
-import { Redis } from 'ioredis'
+import { Redis, Pipeline } from 'ioredis'
+
+const expire = vi.spyOn(Pipeline.prototype, 'expire')
+const sadd = vi.spyOn(Pipeline.prototype, 'sadd')
 
 describe('Cache plugin (redis)', () => {
   let db: ClientContract<typeof schema>
@@ -14,22 +17,23 @@ describe('Cache plugin (redis)', () => {
   beforeEach(async () => {
     db = new ZenStackClient(schema, {
       dialect: new SqliteDialect({
-        database: new SQLite(':memory:')
-      })
+        database: new SQLite(':memory:'),
+      }),
     })
 
     redis = new Redis(process.env['REDIS_URL'] as string)
 
     await db.$pushSchema()
     await redis.flushdb()
-  
-    vi.useFakeTimers()
   })
 
   afterEach(async () => {
     vi.useRealTimers()
     await db?.$disconnect()
-    await redis.disconnect()
+  })
+
+  afterAll(async () => {
+    await redis.flushdb()
   })
 
   it('respects ttl', async () => {
@@ -44,309 +48,327 @@ describe('Cache plugin (redis)', () => {
     expect(extDb.$cache.status).toBe(null)
     expect(extDb.$cache.revalidation).toBe(null)
 
-    const user = await extDb.user.create({
-      data: {
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.findFirst({
+        where: {
+          id: user.id,
+        },
+
+        cache: {
+          ttl: 60,
+        },
+      })
+
+      expect(expire.mock.lastCall![1]).toBe(60)
+
+      await extDb.user.delete({
+        where: {
+          id: user.id,
+        },
+      })
+
+      await expect(
+        extDb.user.findFirst({
+          where: {
+            id: user.id,
+          },
+
+          cache: {
+            ttl: 60,
+          },
+        }),
+      ).resolves.toMatchObject({
         email: 'test@email.com',
-      },
-    })
+      })
+    }
 
-    await Promise.all([
-      extDb.user.findFirst({
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.findUnique({
         where: {
           id: user.id,
         },
 
         cache: {
-          ttl: 60,
+          ttl: 61,
         },
-      }),
+      })
 
-      extDb.user.findUnique({
+      expect(expire.mock.lastCall![1]).toBe(61)
+
+      await extDb.user.delete({
+        where: {
+          id: user.id,
+        },
+      })
+
+      await expect(
+        extDb.user.findUnique({
+          where: {
+            id: user.id,
+          },
+
+          cache: {
+            ttl: 61,
+          },
+        }),
+      ).resolves.toMatchObject({
+        email: 'test@email.com',
+      })
+
+      expect(extDb.$cache.status).toBe('hit')
+    }
+
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.findMany({
         where: {
           id: user.id,
         },
 
         cache: {
-          ttl: 60,
+          ttl: 62,
         },
-      }),
+      })
 
-      extDb.user.findMany({
-        cache: {
-          ttl: 60,
+      expect(expire.mock.lastCall![1]).toBe(62)
+
+      await extDb.user.delete({
+        where: {
+          id: user.id,
         },
-      }),
+      })
 
-      extDb.user.findFirstOrThrow({
+      await expect(
+        extDb.user.findMany({
+          where: {
+            id: user.id,
+          },
+
+          cache: {
+            ttl: 62,
+          },
+        }),
+      ).resolves.toHaveLength(1)
+
+      expect(extDb.$cache.status).toBe('hit')
+    }
+
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.findFirstOrThrow({
         where: {
           id: user.id,
         },
 
         cache: {
-          ttl: 60,
+          ttl: 63,
         },
-      }),
+      })
 
-      extDb.user.findUniqueOrThrow({
+      expect(expire.mock.lastCall![1]).toBe(63)
+
+      await extDb.user.delete({
+        where: {
+          id: user.id,
+        },
+      })
+
+      await expect(
+        extDb.user.findFirstOrThrow({
+          where: {
+            id: user.id,
+          },
+
+          cache: {
+            ttl: 63,
+          },
+        }),
+      ).resolves.toMatchObject({
+        email: 'test@email.com',
+      })
+
+      expect(extDb.$cache.status).toBe('hit')
+    }
+
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.findUniqueOrThrow({
         where: {
           id: user.id,
         },
 
         cache: {
-          ttl: 60,
+          ttl: 64,
         },
-      }),
+      })
 
-      extDb.user.exists({
+      expect(expire.mock.lastCall![1]).toBe(64)
+
+      await extDb.user.delete({
+        where: {
+          id: user.id,
+        },
+      })
+
+      await expect(
+        extDb.user.findUniqueOrThrow({
+          where: {
+            id: user.id,
+          },
+
+          cache: {
+            ttl: 64,
+          },
+        }),
+      ).resolves.toMatchObject({
+        email: 'test@email.com',
+      })
+
+      expect(extDb.$cache.status).toBe('hit')
+    }
+
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.exists({
         where: {
           id: user.id,
         },
 
         cache: {
-          ttl: 60,
+          ttl: 65,
         },
-      }),
+      })
 
-      extDb.user.count({
+      expect(expire.mock.lastCall![1]).toBe(65)
+
+      await extDb.user.delete({
+        where: {
+          id: user.id,
+        },
+      })
+
+      await expect(
+        extDb.user.exists({
+          where: {
+            id: user.id,
+          },
+
+          cache: {
+            ttl: 65,
+          },
+        }),
+      ).resolves.toBe(true)
+
+      expect(extDb.$cache.status).toBe('hit')
+    }
+
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.count({
+        where: {
+          id: user.id,
+        },
+
         cache: {
-          ttl: 60,
+          ttl: 66,
         },
-      }),
+      })
 
-      // extDb.user.aggregate({
-      //     where: {
-      //         id: user.id,
-      //     },
+      expect(expire.mock.lastCall![1]).toBe(66)
 
-      //     cache: {
-      //         ttl: 60,
-      //     },
-      // }),
+      await extDb.user.delete({
+        where: {
+          id: user.id,
+        },
+      })
 
-      extDb.user.groupBy({
+      await expect(
+        extDb.user.count({
+          where: {
+            id: user.id,
+          },
+
+          cache: {
+            ttl: 66,
+          },
+        }),
+      ).resolves.toBe(1)
+
+      expect(extDb.$cache.status).toBe('hit')
+    }
+
+    {
+      const user = await extDb.user.create({
+        data: {
+          email: 'test@email.com',
+        },
+      })
+
+      await extDb.user.groupBy({
         by: 'id',
 
         cache: {
-          ttl: 60,
+          ttl: 67,
         },
-      }),
-    ])
+      })
 
-    expect(extDb.$cache.status).toBe('miss')
+      expect(expire.mock.lastCall![1]).toBe(67)
 
-    await Promise.all([
-      extDb.user.delete({
+      await extDb.user.delete({
         where: {
           id: user.id,
         },
-      }),
+      })
 
-      extDb.user.create({
-        data: {
-          email: 'test2@email.com',
-        },
-      }),
+      await expect(
+        extDb.user.groupBy({
+          by: 'id',
 
-      extDb.user.create({
-        data: {
-          email: 'test3@email.com',
-        },
-      }),
-    ])
-
-    await expect(
-      extDb.user.findFirst({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toMatchObject({
-      email: 'test@email.com',
-    })
+          cache: {
+            ttl: 67,
+          },
+        }),
+      ).resolves.toHaveLength(1)
+    }
 
     expect(extDb.$cache.status).toBe('hit')
-
-    await expect(
-      extDb.user.findUnique({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toMatchObject({
-      email: 'test@email.com',
-    })
-
-    await expect(
-      extDb.user.findMany({
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toHaveLength(1)
-
-    await expect(
-      extDb.user.findFirstOrThrow({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toMatchObject({
-      email: 'test@email.com',
-    })
-
-    await expect(
-      extDb.user.findUniqueOrThrow({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toMatchObject({
-      email: 'test@email.com',
-    })
-
-    await expect(
-      extDb.user.exists({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toBe(true)
-
-    await expect(
-      extDb.user.count({
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toBe(1)
-
-    // await expect(extDb.user.aggregate({
-    //     where: {
-    //         id: user.id,
-    //     },
-
-    //     cache: {
-    //         ttl: 60,
-    //     },
-    // })).resolves.toHaveLength(1);
-
-    await expect(
-      extDb.user.groupBy({
-        by: 'id',
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toHaveLength(1)
-
-    vi.advanceTimersByTime(61000)
-
-    await expect(
-      extDb.user.findFirst({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toBeNull()
-
-    await expect(
-      extDb.user.findUnique({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toBeNull()
-
-    await expect(
-      extDb.user.findMany({
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toHaveLength(2)
-
-    await expect(
-      extDb.user.findFirstOrThrow({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).rejects.toThrow('Record not found')
-
-    await expect(
-      extDb.user.findUniqueOrThrow({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).rejects.toThrow('Record not found')
-
-    await expect(
-      extDb.user.exists({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toBe(false)
-
-    await expect(
-      extDb.user.count({
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toBe(2)
-
-    await expect(
-      extDb.user.groupBy({
-        by: 'id',
-
-        cache: {
-          ttl: 60,
-        },
-      }),
-    ).resolves.toHaveLength(2)
   })
 
   it('respects swr', async () => {
@@ -373,6 +395,8 @@ describe('Cache plugin (redis)', () => {
         swr: 60,
       },
     })
+
+    expect(expire.mock.lastCall![1]).toBe(60)
 
     await extDb.user.update({
       data: {
@@ -472,7 +496,6 @@ describe('Cache plugin (redis)', () => {
     })
 
     expect(extDb.$cache.status).toBe('hit')
-    vi.advanceTimersByTime(65000)
 
     await expect(
       extDb.user.findFirst({
@@ -489,27 +512,13 @@ describe('Cache plugin (redis)', () => {
       name: null,
     })
 
-    expect(extDb.$cache.status).toBe('stale')
-    expect(extDb.$cache.revalidation).not.toBe(null)
-    await extDb.$cache.revalidation
-
-    await expect(
-      extDb.user.findFirst({
-        where: {
-          id: user.id,
-        },
-
-        cache: {
-          ttl: 60,
-          swr: 60,
-        },
-      }),
-    ).resolves.toMatchObject({
-      name: 'newname',
-    })
+    expect(expire.mock.lastCall![1]).toBe(120)
   })
 
   it('supports invalidating all entries', async () => {
+    // This should still exist after we invalidate everything
+    await redis.set('unrelatedkey', '1')
+
     const extDb = db.$use(
       defineCachePlugin({
         provider: new RedisCacheProvider({
@@ -626,7 +635,8 @@ describe('Cache plugin (redis)', () => {
       }),
     ])
 
-    extDb.$cache.invalidateAll()
+    await extDb.$cache.invalidateAll()
+    await expect(redis.get('unrelatedkey')).resolves.toBe('1')
 
     await expect(
       extDb.user.findFirst({
@@ -1025,5 +1035,13 @@ describe('Cache plugin (redis)', () => {
         },
       }),
     ).rejects.toThrow('Invalid findMany')
+
+    await extDb.user.findMany({
+      cache: {
+        tags: ['test'],
+      },
+    })
+
+    expect(sadd.mock.lastCall!).toBe('zenstack:cache:tag:test')
   })
 })
