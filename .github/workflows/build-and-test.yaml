@@ -7,7 +7,7 @@ jobs:
     container: node:20
     services:
       redis:
-        image: redis:3.0
+        image: redis:7.0
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 5s
