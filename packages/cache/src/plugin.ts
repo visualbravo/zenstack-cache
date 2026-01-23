@@ -1,5 +1,5 @@
 import { definePlugin } from '@zenstackhq/orm'
-import stableStringify from 'stable-hash'
+import { stableHash } from 'stable-hash'
 import murmurhash from 'murmurhash'
 import { cacheEnvelopeSchema } from './schemas'
 import type {
@@ -58,7 +58,7 @@ export function defineCachePlugin(pluginOptions: CachePluginOptions) {
 
     onQuery: async ({ args, model, operation, proceed }) => {
       if (args && 'cache' in args) {
-        const json = stableStringify({
+        const json = stableHash({
           args,
           model,
           operation,
