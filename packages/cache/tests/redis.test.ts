@@ -23,6 +23,9 @@ describe('Cache plugin (redis)', () => {
 
     redis = new Redis(process.env['REDIS_URL'] as string)
 
+    expire.mockClear()
+    sadd.mockClear()
+
     await db.$pushSchema()
     await redis.flushdb()
   })
@@ -1043,5 +1046,66 @@ describe('Cache plugin (redis)', () => {
     })
 
     expect(sadd.mock.lastCall![0]).toBe('zenstack:cache:tag:test')
+  })
+
+  it('handles tag set ttls', async () => {
+    const extDb = db.$use(
+      defineCachePlugin({
+        provider: new RedisCacheProvider({
+          url: process.env['REDIS_URL'] as string,
+        }),
+      }),
+    )
+
+    await extDb.user.findMany({
+      cache: {
+        tags: ['test'],
+      },
+    })
+
+    expect(expire).not.toHaveBeenCalled()
+
+    await extDb.user.findMany({
+      cache: {
+        ttl: 30,
+        tags: ['test'],
+      },
+    })
+
+    // A tag set's TTL should be the highest TTL of the keys in it.
+    await expect(redis.ttl('zenstack:cache:tag:test')).resolves.toBeCloseTo(30, 2)
+
+    await extDb.user.exists({
+      cache: {
+        ttl: 40,
+        tags: ['test', 'test2'],
+      },
+    })
+
+    await expect(redis.ttl('zenstack:cache:tag:test')).resolves.toBeCloseTo(40, 2)
+    await expect(redis.ttl('zenstack:cache:tag:test2')).resolves.toBeCloseTo(40, 2)
+
+    // A lower TTL does not change them.
+    await extDb.user.findFirst({
+      cache: {
+        ttl: 10,
+        tags: ['test', 'test2'],
+      },
+    })
+
+    await expect(redis.ttl('zenstack:cache:tag:test')).resolves.toBeCloseTo(40, 2)
+    await expect(redis.ttl('zenstack:cache:tag:test2')).resolves.toBeCloseTo(40, 2)
+
+    // Should work with SWR too.
+    await extDb.user.findFirst({
+      cache: {
+        swr: 80,
+        tags: ['test', 'test2', 'test3'],
+      },
+    })
+
+    await expect(redis.ttl('zenstack:cache:tag:test')).resolves.toBeCloseTo(80, 2)
+    await expect(redis.ttl('zenstack:cache:tag:test2')).resolves.toBeCloseTo(80, 2)
+    await expect(redis.ttl('zenstack:cache:tag:test3')).resolves.toBeCloseTo(80, 2)
   })
 })
