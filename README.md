@@ -29,6 +29,7 @@
 ## Features
 * 🌐 **Redis Caching:** Centralizes your caching to scale across different systems.
 * 🖥️ **Memory Caching:** Simplifies caching when scale is not a concern.
+* 🛟 **Type-safe:** The caching options appear in the intellisense for all read queries.
 
 ## Requirements
 
@@ -74,11 +75,11 @@ async function getPostsPublishedByUser(userId: string) {
   const publishedPosts = await client.post.findMany({
     where: {
       published: true,
-      authorId: 1,
+      authorId: userId,
     },
 
+    // All of these are optional.
     cache: {
-      // All of these are optional.
       ttl: 60,
       swr: 120,
       tags: [`user:${userId}`],
@@ -128,9 +129,7 @@ const revalidatedPublishedPosts = await client.$cache.revalidation as Post[]
 * `swr` reduces response times by serving cached results, but does not reduce database load because it performs a revalidation in the background after each request.
 
 > [!NOTE]
-> The total TTL of a cache entry is equal to its `ttl` + `swr`. The `ttl` window comes first, followed by the `swr` window.
-
-You can combine the two options to best suit the needs of your application.
+> The total TTL of a cache entry is equal to its `ttl` + `swr`. The `ttl` window comes first, followed by the `swr` window. You can combine the two options to best suit the needs of your application.
 
 ## License
 
