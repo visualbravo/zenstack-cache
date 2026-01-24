@@ -1,6 +1,7 @@
 import type { CacheInvalidationOptions, CacheProvider, CacheEntry } from '../types'
 import { Redis } from 'ioredis'
 import { getTotalTtl } from '../utils'
+import { superjson } from '../superjson'
 
 export class RedisCacheProvider implements CacheProvider {
   private readonly redis: Redis
@@ -16,14 +17,14 @@ export class RedisCacheProvider implements CacheProvider {
       return undefined
     }
 
-    return JSON.parse(entryJson) as CacheEntry
+    return superjson.parse(entryJson) as CacheEntry
   }
 
   async set(key: string, entry: CacheEntry) {
     const multi = this.redis.multi()
     const formattedKey = formatQueryKey(key)
 
-    multi.set(formattedKey, JSON.stringify(entry))
+    multi.set(formattedKey, superjson.stringify(entry))
 
     const totalTtl = getTotalTtl(entry)
 
