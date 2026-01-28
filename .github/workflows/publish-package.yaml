@@ -38,8 +38,16 @@ jobs:
         env:
           REDIS_URL: redis://redis:6379
         run: bun run test
+
+      - name: Copy extra files
+        run: cp ./README.md ./LICENSE ./packages/cache
       
-      - name: Publish package
+      - name: Publish package to NPM
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
-        run: cd ./packages/live && bun publish --access public
+        run: cd ./packages/cache && bun publish --access public --tolerate-republish
+
+      - name: Publish package to GitHub
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
+        run: bun publish --access public --registry https://npm.pkg.github.com --tolerate-republish
