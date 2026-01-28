@@ -4,12 +4,12 @@ on:
     types: [published]
   workflow_dispatch:
 jobs:
-  build-and-test:
+  build-test-and-publish:
     runs-on: ubuntu-latest
-    container: node:22
+    container: node:20
     services:
       redis:
-        image: redis:5.0
+        image: redis:7.0
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 5s
