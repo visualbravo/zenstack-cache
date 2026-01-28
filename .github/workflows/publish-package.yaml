@@ -45,9 +45,9 @@ jobs:
       - name: Publish package to NPM
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
-        run: cd ./packages/cache && bun publish --access public --tolerate-republish
+        run: cd ./packages/cache && bun publish --tolerate-republish --access public
 
       - name: Publish package to GitHub
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
-        run: cd ./packages/cache && bun publish --access public --registry https://npm.pkg.github.com --tolerate-republish
+        run: cd ./packages/cache && bun publish --tolerate-republish --access public --registry https://npm.pkg.github.com
