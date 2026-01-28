@@ -1107,5 +1107,19 @@ describe('Cache plugin (redis)', () => {
     await expect(redis.ttl('zenstack:cache:tag:test')).resolves.toBeCloseTo(80, 2)
     await expect(redis.ttl('zenstack:cache:tag:test2')).resolves.toBeCloseTo(80, 2)
     await expect(redis.ttl('zenstack:cache:tag:test3')).resolves.toBeCloseTo(80, 2)
+
+    /**
+     * If a tag set already has a TTL, but the options don't specify one, the tag set's
+     * TTL should be removed.
+     */
+    await extDb.user.findFirst({
+      cache: {
+        tags: ['test'],
+      },
+    })
+
+    await expect(redis.ttl('zenstack:cache:tag:test')).resolves.toBe(-1)
+    await expect(redis.ttl('zenstack:cache:tag:test2')).resolves.toBeCloseTo(80, 2)
+    await expect(redis.ttl('zenstack:cache:tag:test3')).resolves.toBeCloseTo(80, 2)
   })
 })

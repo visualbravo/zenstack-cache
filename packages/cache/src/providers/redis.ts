@@ -42,6 +42,9 @@ export class RedisCacheProvider implements CacheProvider {
           multi.expire(formattedTagKey, totalTtl, 'GT')
           multi.expire(formattedTagKey, totalTtl, 'NX')
         }
+        else {
+          multi.persist(formattedTagKey)
+        }
       }
     }
 
