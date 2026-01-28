@@ -5,6 +5,7 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
+  "repository": "github:visualbravo/zenstack-cache",
   "exports": {
     ".": {
       "@zenstack-cache/source": "./src/index.ts",
