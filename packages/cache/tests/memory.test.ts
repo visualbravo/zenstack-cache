@@ -12,12 +12,12 @@ describe('Cache plugin (memory)', () => {
   beforeEach(async () => {
     db = new ZenStackClient(schema, {
       dialect: new SqliteDialect({
-        database: new SQLite(':memory:')
-      })
+        database: new SQLite(':memory:'),
+      }),
     })
 
     await db.$pushSchema()
-  
+
     vi.useFakeTimers()
   })
 
@@ -339,6 +339,42 @@ describe('Cache plugin (memory)', () => {
         },
       }),
     ).resolves.toHaveLength(2)
+
+    await extDb.user.create({
+      data: {
+        email: 'test4@email.com',
+      },
+    })
+
+    await extDb.user.exists({
+      where: {
+        email: 'test4@email.com',
+      },
+
+      cache: {
+        tags: ['test4'],
+      },
+    })
+
+    await extDb.user.delete({
+      where: {
+        email: 'test4@email.com',
+      },
+    })
+
+    vi.advanceTimersByTime(60000)
+
+    await expect(
+      extDb.user.exists({
+        where: {
+          email: 'test4@email.com',
+        },
+
+        cache: {
+          tags: ['test4'],
+        },
+      }),
+    ).resolves.toBe(true)
   })
 
   it('respects swr', async () => {
@@ -999,7 +1035,7 @@ describe('Cache plugin (memory)', () => {
     expect(onIntervalExpiration).toHaveBeenCalledOnce()
 
     // @ts-expect-error
-    const arg = onIntervalExpiration.mock.lastCall[0]
+    const arg = onIntervalExpiration.mock.lastCall[0]!
 
     expect(arg).toMatchObject({
       result: false,

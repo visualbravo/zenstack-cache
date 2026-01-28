@@ -5,7 +5,9 @@ export function getTotalTtl(entry: CacheEntry) {
 }
 
 export function entryIsFresh(entry: CacheEntry) {
-  return entry.options.ttl ? Date.now() <= entry.createdAt + (entry.options.ttl ?? 0) * 1000 : false
+  return entry.options.ttl
+    ? Date.now() <= entry.createdAt + (entry.options.ttl ?? 0) * 1000
+    : !entry.options.swr
 }
 
 export function entryIsStale(entry: CacheEntry) {
@@ -13,5 +15,11 @@ export function entryIsStale(entry: CacheEntry) {
 }
 
 export function entryIsExpired(entry: CacheEntry) {
-  return Date.now() > entry.createdAt + getTotalTtl(entry) * 1000
+  const totalTtl = getTotalTtl(entry)
+
+  if (totalTtl === 0) {
+    return false
+  }
+
+  return Date.now() > entry.createdAt + totalTtl * 1000
 }
