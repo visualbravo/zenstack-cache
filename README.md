@@ -29,6 +29,7 @@
 * 🌐 **Redis Cache:** A central cache to scale across different systems.
 * 🖥️ **Memory Cache:** A simple cache when scale is not a concern.
 * 🛟 **Type-safety:** The caching options appear in the intellisense for all read queries.
+* 🏷️ **Tag-based Invalidation:** Easily invalidate multiple related cache entries.
 
 ## Requirements
 
