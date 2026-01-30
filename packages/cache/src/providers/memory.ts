@@ -22,18 +22,22 @@ export class MemoryCacheProvider implements CacheProvider {
       if (entryIsExpired(entry)) {
         this.entryStore.delete(key)
         this.options?.onIntervalExpiration?.(entry)
-      }
-    }
 
-    for (const [tag, keys] of this.tagStore) {
-      for (const key of keys) {
-        if (!this.entryStore.has(key)) {
-          keys.delete(key)
+        if (entry.options.tags) {
+          for (const tag of entry.options.tags) {
+            const keys = this.tagStore.get(tag)
+
+            if (!keys) {
+              continue
+            }
+
+            keys.delete(key)
+
+            if (keys.size === 0) {
+              this.tagStore.delete(tag)
+            }
+          }
         }
-      }
-
-      if (keys.size === 0) {
-        this.tagStore.delete(tag)
       }
     }
   }
@@ -66,11 +70,15 @@ export class MemoryCacheProvider implements CacheProvider {
       for (const tag of options.tags) {
         const keys = this.tagStore.get(tag)
 
-        if (keys) {
-          for (const key of keys) {
-            this.entryStore.delete(key)
-          }
+        if (!keys) {
+          continue
         }
+
+        for (const key of keys) {
+          this.entryStore.delete(key)
+        }
+
+        this.tagStore.delete(tag)
       }
     }
 

@@ -28,6 +28,7 @@
     "eslint/no-undefined": "off",
     "eslint/no-empty-function": "off",
     "eslint/no-continue": "off",
+    "eslint/max-depth": "off",
     "eslint/max-statements": "off",
     "eslint/no-implicit-coercion": "off",
     "eslint/no-plusplus": "off",
