@@ -10,13 +10,13 @@
     <a href="https://www.npmjs.com/package/@visualbravo/zenstack-cache?activeTab=versions">
       <img alt="NPM Version" src="https://img.shields.io/npm/v/%40visualbravo%2Fzenstack-cache/latest">
     </a>
-    <a>
-      <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/visualbravo/zenstack-cache/build-and-test.yaml">
+    <a href="https://github.com/visualbravo/zenstack-cache/actions/workflows/build-and-test.yaml?query=branch%3Adev++">
+      <img alt="Build Status" src="https://img.shields.io/github/actions/workflow/status/visualbravo/zenstack-cache/build-and-test.yaml">
     </a>
     <a href="https://discord.gg/Ykhr738dUe">
       <img alt="Join the ZenStack server" src="https://img.shields.io/discord/1035538056146595961">
     </a>
-    <a href="https://github.com/visualbravo/zenstack-cache/blob/main/LICENSE">
+    <a href="https://github.com/visualbravo/zenstack-cache/blob/76a2de03245c26841b04525dd8b424a8799d654c/LICENSE">
       <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green">
     </a>
 
