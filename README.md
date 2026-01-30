@@ -33,7 +33,7 @@
 
 ## Requirements
 
-* ZenStack (version >= `canary`)
+* ZenStack (version >= `3.3.0`)
 * Node.js (version >= `20.0.0`)
 * Redis (version >= `7.0.0`)
   * ℹ️ Only if you intend to use the `RedisCacheProvider`
