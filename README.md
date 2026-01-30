@@ -1,7 +1,6 @@
 <div align="center">
   <h1>
     ZenStack Cache
-    <small>(beta)</small>
   </h1>
 
   Reduce response times and database load with query-level caching integrated with the ZenStack ORM.
@@ -27,9 +26,9 @@
 </div>
 
 ## Features
-* 🌐 **Redis Caching:** Centralizes your caching to scale across different systems.
-* 🖥️ **Memory Caching:** Simplifies caching when scale is not a concern.
-* 🛟 **Type-safe:** The caching options appear in the intellisense for all read queries.
+* 🌐 **Redis Cache:** A central cache to scale across different systems.
+* 🖥️ **Memory Cache:** A simple cache when scale is not a concern.
+* 🛟 **Type-safety:** The caching options appear in the intellisense for all read queries.
 
 ## Requirements
 

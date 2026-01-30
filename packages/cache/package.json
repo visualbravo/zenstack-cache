@@ -1,12 +1,12 @@
 {
   "name": "@visualbravo/zenstack-cache",
   "version": "0.0.0",
-  "type": "module",
   "license": "MIT",
+  "repository": "github:visualbravo/zenstack-cache",
+  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
-  "repository": "github:visualbravo/zenstack-cache",
   "exports": {
     ".": {
       "@zenstack-cache/source": "./src/index.ts",
@@ -105,10 +105,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "7.6.13",
     "@zenstack-cache/config": "workspace:*",
-    "kysely": "catalog:",
     "better-sqlite3": "12.6.2",
-    "@types/better-sqlite3": "7.6.13"
+    "kysely": "catalog:"
   },
   "peerDependencies": {
     "@zenstackhq/orm": "catalog:"

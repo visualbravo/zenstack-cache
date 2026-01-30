@@ -362,7 +362,7 @@ describe('Cache plugin (memory)', () => {
       },
     })
 
-    vi.advanceTimersByTime(60000)
+    vi.advanceTimersByTime(70000)
 
     await expect(
       extDb.user.exists({
@@ -1051,6 +1051,24 @@ describe('Cache plugin (memory)', () => {
         provider: new MemoryCacheProvider(),
       }),
     )
+
+    await extDb.user.findMany({
+      cache: {},
+    })
+
+    await extDb.user.create({
+      data: {
+        email: 'test@email.com',
+      },
+    })
+
+    vi.advanceTimersByTime(70000)
+
+    await expect(
+      extDb.user.findMany({
+        cache: {},
+      }),
+    ).resolves.toHaveLength(0)
 
     await expect(
       extDb.user.findMany({

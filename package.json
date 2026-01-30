@@ -30,7 +30,7 @@
       "packages/*"
     ],
     "catalog": {
-      "@zenstackhq/orm": "canary",
+      "@zenstackhq/orm": "^3.3.0",
       "zod": "^4.1.0",
       "kysely": "~0.28.8",
       "ioredis": "^5.0.0",

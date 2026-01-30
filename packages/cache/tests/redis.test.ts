@@ -9,6 +9,7 @@ import { Redis, Pipeline } from 'ioredis'
 
 const expire = vi.spyOn(Pipeline.prototype, 'expire')
 const sadd = vi.spyOn(Pipeline.prototype, 'sadd')
+const set = vi.spyOn(Pipeline.prototype, 'set')
 
 describe('Cache plugin (redis)', () => {
   let db: ClientContract<typeof schema>
@@ -25,6 +26,7 @@ describe('Cache plugin (redis)', () => {
 
     expire.mockClear()
     sadd.mockClear()
+    set.mockClear()
 
     await db.$pushSchema()
     await redis.flushdb()
@@ -1013,6 +1015,13 @@ describe('Cache plugin (redis)', () => {
         }),
       }),
     )
+
+    await extDb.user.findMany({
+      cache: {},
+    })
+
+    expect(set).toHaveBeenCalled()
+    expect(expire).not.toHaveBeenCalled()
 
     await expect(
       extDb.user.findMany({

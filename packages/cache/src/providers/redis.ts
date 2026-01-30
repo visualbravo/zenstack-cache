@@ -11,7 +11,7 @@ export class RedisCacheProvider implements CacheProvider {
   }
 
   async get(key: string) {
-    const entryJson = await this.redis.get(formatQueryKey(key))
+    const entryJson = await this.redis.get(makeQueryKey(key))
 
     if (!entryJson) {
       return undefined
@@ -22,28 +22,27 @@ export class RedisCacheProvider implements CacheProvider {
 
   async set(key: string, entry: CacheEntry) {
     const multi = this.redis.multi()
-    const formattedKey = formatQueryKey(key)
+    const queryKey = makeQueryKey(key)
 
-    multi.set(formattedKey, superjson.stringify(entry))
+    multi.set(queryKey, superjson.stringify(entry))
 
     const totalTtl = getTotalTtl(entry)
 
     if (totalTtl > 0) {
-      multi.expire(formattedKey, totalTtl)
+      multi.expire(queryKey, totalTtl)
     }
 
     if (entry.options.tags) {
       for (const tag of entry.options.tags) {
-        const formattedTagKey = formatTagKey(tag)
+        const tagKey = makeTagKey(tag)
 
-        multi.sadd(formattedTagKey, formattedKey)
+        multi.sadd(tagKey, queryKey)
 
         if (totalTtl > 0) {
-          multi.expire(formattedTagKey, totalTtl, 'GT')
-          multi.expire(formattedTagKey, totalTtl, 'NX')
-        }
-        else {
-          multi.persist(formattedTagKey)
+          multi.expire(tagKey, totalTtl, 'GT')
+          multi.expire(tagKey, totalTtl, 'NX')
+        } else {
+          multi.persist(tagKey)
         }
       }
     }
@@ -56,7 +55,7 @@ export class RedisCacheProvider implements CacheProvider {
       await Promise.all(
         options.tags.map(tag => {
           return new Promise((resolve, reject) => {
-            const stream = this.redis.sscanStream(formatTagKey(tag), {
+            const stream = this.redis.sscanStream(makeTagKey(tag), {
               count: 100,
             })
 
@@ -97,10 +96,10 @@ export type RedisCacheProviderOptions = {
   url: string
 }
 
-function formatQueryKey(key: string) {
+function makeQueryKey(key: string) {
   return `zenstack:cache:query:${key}`
 }
 
-function formatTagKey(key: string) {
+function makeTagKey(key: string) {
   return `zenstack:cache:tag:${key}`
 }
