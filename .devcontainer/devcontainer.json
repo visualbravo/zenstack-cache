@@ -5,7 +5,7 @@
   "workspaceFolder": "/workspace",
   "service": "workspace",
   "shutdownAction": "stopCompose",
-  "postCreateCommand": "npm install -g bun@1.3.7 && bun install --frozen-lockfile",
+  "postCreateCommand": "npm install -g bun@1.3.8 && bun install --frozen-lockfile",
   "remoteUser": "node",
   "forwardPorts": [5432, 5540, 6379],
   "customizations": {
