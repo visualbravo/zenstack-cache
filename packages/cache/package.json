@@ -1,12 +1,13 @@
 {
   "name": "@visualbravo/zenstack-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "repository": "github:visualbravo/zenstack-cache",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
+  "keywords": ["zenstack", "cache", "caching", "prisma", "accelerate", "orm"],
   "exports": {
     ".": {
       "@zenstack-cache/source": "./src/index.ts",

@@ -1,8 +1,8 @@
 import z from 'zod'
 
 export const cacheOptionsSchema = z.strictObject({
-  ttl: z.number().min(1).optional(),
-  swr: z.number().min(1).optional(),
+  ttl: z.int().positive().optional(),
+  swr: z.int().positive().optional(),
   tags: z.string().array().optional(),
 })
 
