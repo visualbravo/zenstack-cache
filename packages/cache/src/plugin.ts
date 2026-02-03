@@ -80,19 +80,16 @@ export function defineCachePlugin(pluginOptions: CachePluginOptions) {
             status = 'hit'
             return entry.result
           } else if (entryIsStale(entry)) {
-            revalidation = proceed(args).then(async result => {
-              try {
-                await cache.set(key, {
+            revalidation = proceed(args).then(result => {
+              cache
+                .set(key, {
                   createdAt: Date.now(),
                   options,
                   result,
                 })
+                .catch(err => console.error(`Failed to cache query result: ${err}`))
 
-                return result
-              } catch (err) {
-                console.error(`Failed to cache query result: ${err}`)
-                return null
-              }
+              return result
             })
 
             status = 'stale'
