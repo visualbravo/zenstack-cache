@@ -16,7 +16,8 @@
         "tamasfe.even-better-toml",
         "oven.bun-vscode",
         "oxc.oxc-vscode",
-        "vitest.explorer"
+        "vitest.explorer",
+        "zenstack.zenstack-v3"
       ]
     }
   }

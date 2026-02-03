@@ -4,7 +4,7 @@ import { defineCachePlugin } from '../src'
 import { SqliteDialect } from 'kysely'
 import SQLite from 'better-sqlite3'
 import { MemoryCacheProvider } from '../src/providers/memory'
-import { schema } from './schemas/basic'
+import { schema } from './schemas/basic/schema'
 
 describe('Cache plugin (memory)', () => {
   let db: ClientContract<typeof schema>
@@ -1094,5 +1094,63 @@ describe('Cache plugin (memory)', () => {
         },
       }),
     ).rejects.toThrow('Invalid findMany')
+  })
+
+  it('caches auth separately', async () => {
+    let extDb = db.$use(
+      defineCachePlugin({
+        provider: new MemoryCacheProvider(),
+      }),
+    )
+
+    await expect(
+      extDb.user.exists({
+        where: {
+          id: '1',
+        },
+
+        cache: {},
+      }),
+    ).resolves.toBe(false)
+
+    await extDb.user.create({
+      data: {
+        createdAt: new Date(),
+        email: 'test@email.com',
+        id: '1',
+        name: 'test',
+        role: 'USER',
+        updatedAt: new Date(),
+      },
+    })
+
+    await expect(
+      extDb.user.exists({
+        where: {
+          id: '1',
+        },
+
+        cache: {},
+      }),
+    ).resolves.toBe(false)
+
+    extDb = extDb.$setAuth({
+      createdAt: new Date(),
+      email: 'test@email.com',
+      id: '1',
+      name: 'test',
+      role: 'USER',
+      updatedAt: new Date(),
+    })
+
+    await expect(
+      extDb.user.exists({
+        where: {
+          id: '1',
+        },
+
+        cache: {},
+      }),
+    ).resolves.toBe(true)
   })
 })
