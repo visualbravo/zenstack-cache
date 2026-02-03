@@ -4,7 +4,7 @@ import { defineCachePlugin } from '../src'
 import { SqliteDialect } from 'kysely'
 import SQLite from 'better-sqlite3'
 import { RedisCacheProvider } from '../src/providers/redis'
-import { schema } from './schemas/basic'
+import { schema } from './schemas/basic/schema'
 import { Redis, Pipeline } from 'ioredis'
 
 const expire = vi.spyOn(Pipeline.prototype, 'expire')
@@ -1130,5 +1130,65 @@ describe('Cache plugin (redis)', () => {
     await expect(redis.ttl('zenstack:cache:tag:test')).resolves.toBe(-1)
     await expect(redis.ttl('zenstack:cache:tag:test2')).resolves.toBeCloseTo(80, 2)
     await expect(redis.ttl('zenstack:cache:tag:test3')).resolves.toBeCloseTo(80, 2)
+  })
+
+  it('caches auth separately', async () => {
+    let extDb = db.$use(
+      defineCachePlugin({
+        provider: new RedisCacheProvider({
+          url: process.env['REDIS_URL'] as string,
+        }),
+      }),
+    )
+
+    await expect(
+      extDb.user.exists({
+        where: {
+          id: '1',
+        },
+
+        cache: {},
+      }),
+    ).resolves.toBe(false)
+
+    await extDb.user.create({
+      data: {
+        createdAt: new Date(),
+        email: 'test@email.com',
+        id: '1',
+        name: 'test',
+        role: 'USER',
+        updatedAt: new Date(),
+      },
+    })
+
+    await expect(
+      extDb.user.exists({
+        where: {
+          id: '1',
+        },
+
+        cache: {},
+      }),
+    ).resolves.toBe(false)
+
+    extDb = extDb.$setAuth({
+      createdAt: new Date(),
+      email: 'test@email.com',
+      id: '1',
+      name: 'test',
+      role: 'USER',
+      updatedAt: new Date(),
+    })
+
+    await expect(
+      extDb.user.exists({
+        where: {
+          id: '1',
+        },
+
+        cache: {},
+      }),
+    ).resolves.toBe(true)
   })
 })

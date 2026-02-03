@@ -1,20 +1,23 @@
 {
   "name": "@visualbravo/zenstack-cache",
-  "version": "1.0.2",
+  "version": "1.0.3",
+  "keywords": [
+    "accelerate",
+    "cache",
+    "caching",
+    "orm",
+    "prisma",
+    "redis",
+    "self-hosted",
+    "typescript",
+    "zenstack"
+  ],
   "license": "MIT",
   "repository": "github:visualbravo/zenstack-cache",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
-  "keywords": [
-    "zenstack",
-    "cache",
-    "caching",
-    "prisma",
-    "accelerate",
-    "orm"
-  ],
   "exports": {
     ".": {
       "@zenstack-cache/source": "./src/index.ts",

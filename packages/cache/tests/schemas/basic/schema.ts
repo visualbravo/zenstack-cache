@@ -75,36 +75,6 @@ export class SchemaType implements SchemaDef {
           optional: true,
         },
       },
-      attributes: [
-        {
-          name: '@@allow',
-          args: [
-            { name: 'operation', value: ExpressionUtils.literal('all') },
-            {
-              name: 'condition',
-              value: ExpressionUtils.binary(
-                ExpressionUtils.member(ExpressionUtils.call('auth'), ['id']),
-                '==',
-                ExpressionUtils.field('id'),
-              ),
-            },
-          ],
-        },
-        {
-          name: '@@allow',
-          args: [
-            { name: 'operation', value: ExpressionUtils.literal('read') },
-            {
-              name: 'condition',
-              value: ExpressionUtils.binary(
-                ExpressionUtils.call('auth'),
-                '!=',
-                ExpressionUtils._null(),
-              ),
-            },
-          ],
-        },
-      ],
       idFields: ['id'],
       uniqueFields: {
         id: { type: 'String' },
@@ -164,9 +134,12 @@ export class SchemaType implements SchemaDef {
               args: [
                 {
                   name: 'fields',
-                  value: ExpressionUtils.array([ExpressionUtils.field('authorId')]),
+                  value: ExpressionUtils.array('String', [ExpressionUtils.field('authorId')]),
                 },
-                { name: 'references', value: ExpressionUtils.array([ExpressionUtils.field('id')]) },
+                {
+                  name: 'references',
+                  value: ExpressionUtils.array('String', [ExpressionUtils.field('id')]),
+                },
                 { name: 'onUpdate', value: ExpressionUtils.literal('Cascade') },
                 { name: 'onDelete', value: ExpressionUtils.literal('Cascade') },
               ],
@@ -192,43 +165,6 @@ export class SchemaType implements SchemaDef {
           relation: { opposite: 'post' },
         },
       },
-      attributes: [
-        {
-          name: '@@deny',
-          args: [
-            { name: 'operation', value: ExpressionUtils.literal('all') },
-            {
-              name: 'condition',
-              value: ExpressionUtils.binary(
-                ExpressionUtils.call('auth'),
-                '==',
-                ExpressionUtils._null(),
-              ),
-            },
-          ],
-        },
-        {
-          name: '@@allow',
-          args: [
-            { name: 'operation', value: ExpressionUtils.literal('all') },
-            {
-              name: 'condition',
-              value: ExpressionUtils.binary(
-                ExpressionUtils.member(ExpressionUtils.call('auth'), ['id']),
-                '==',
-                ExpressionUtils.field('authorId'),
-              ),
-            },
-          ],
-        },
-        {
-          name: '@@allow',
-          args: [
-            { name: 'operation', value: ExpressionUtils.literal('read') },
-            { name: 'condition', value: ExpressionUtils.field('published') },
-          ],
-        },
-      ],
       idFields: ['id'],
       uniqueFields: {
         id: { type: 'String' },
@@ -273,8 +209,14 @@ export class SchemaType implements SchemaDef {
             {
               name: '@relation',
               args: [
-                { name: 'fields', value: ExpressionUtils.array([ExpressionUtils.field('postId')]) },
-                { name: 'references', value: ExpressionUtils.array([ExpressionUtils.field('id')]) },
+                {
+                  name: 'fields',
+                  value: ExpressionUtils.array('String', [ExpressionUtils.field('postId')]),
+                },
+                {
+                  name: 'references',
+                  value: ExpressionUtils.array('String', [ExpressionUtils.field('id')]),
+                },
                 { name: 'onUpdate', value: ExpressionUtils.literal('Cascade') },
                 { name: 'onDelete', value: ExpressionUtils.literal('Cascade') },
               ],
@@ -344,8 +286,14 @@ export class SchemaType implements SchemaDef {
             {
               name: '@relation',
               args: [
-                { name: 'fields', value: ExpressionUtils.array([ExpressionUtils.field('userId')]) },
-                { name: 'references', value: ExpressionUtils.array([ExpressionUtils.field('id')]) },
+                {
+                  name: 'fields',
+                  value: ExpressionUtils.array('String', [ExpressionUtils.field('userId')]),
+                },
+                {
+                  name: 'references',
+                  value: ExpressionUtils.array('String', [ExpressionUtils.field('id')]),
+                },
                 { name: 'onUpdate', value: ExpressionUtils.literal('Cascade') },
                 { name: 'onDelete', value: ExpressionUtils.literal('Cascade') },
               ],
