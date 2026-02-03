@@ -61,15 +61,11 @@ export function defineCachePlugin(pluginOptions: CachePluginOptions) {
         let json: string
 
         if (client.$auth) {
-          const userId = Object.keys(client.$auth)
-            .filter(key => client.$schema.models[client.$schema.authType!]!.idFields.includes(key))
-            .join('_')
-
           json = stableHash({
             args,
             model,
             operation,
-            userId,
+            auth: client.$auth,
           })
         } else {
           json = stableHash({
