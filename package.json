@@ -1,6 +1,7 @@
 {
   "name": "@visualbravo/zenstack-cache",
   "version": "1.0.5",
+  "description": "Reduce response times and database load with query-level caching integrated with the ZenStack ORM.",
   "keywords": [
     "accelerate",
     "cache",
@@ -12,6 +13,10 @@
     "typescript",
     "zenstack"
   ],
+  "homepage": "https://github.com/visualbravo/zenstack-cache",
+  "bugs": {
+    "url": "https://github.com/visualbravo/zenstack-cache/issues"
+  },
   "license": "MIT",
   "repository": "github:visualbravo/zenstack-cache",
   "type": "module",

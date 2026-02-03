@@ -20,7 +20,7 @@ Reduce response times and database load with query-level caching integrated with
     <a href="https://discord.gg/2PaRSu7X">
       <img alt="Join the ZenStack Cache channel" src="https://img.shields.io/discord/1035538056146595961">
     </a>
-    <a href="https://github.com/visualbravo/zenstack-cache/blob/76a2de03245c26841b04525dd8b424a8799d654c/LICENSE">
+    <a href="https://github.com/visualbravo/zenstack-cache/blob/dev/LICENSE">
       <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green">
     </a>
 
