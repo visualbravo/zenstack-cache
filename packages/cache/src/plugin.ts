@@ -58,11 +58,19 @@ export function defineCachePlugin(pluginOptions: CachePluginOptions) {
 
     onQuery: async ({ args, model, operation, proceed, client }) => {
       if (args && 'cache' in args) {
+        const authId = client.$auth
+          ? Object.keys(client.$auth)
+              .filter(key =>
+                client.$schema.models[client.$schema.authType!]!.idFields.includes(key),
+              )
+              .join('_')
+          : undefined
+
         const json = stableHash({
           args,
           model,
           operation,
-          auth: client.$auth,
+          authId,
         })
 
         if (!json) {
