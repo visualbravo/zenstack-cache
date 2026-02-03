@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "outDir": "./",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",

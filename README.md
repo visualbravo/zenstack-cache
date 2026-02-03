@@ -3,7 +3,8 @@
     ZenStack Cache
   </h1>
 
-  Reduce response times and database load with query-level caching integrated with the ZenStack ORM.
+Reduce response times and database load with query-level caching integrated with the ZenStack ORM.
+
 </div>
 
 <div align="center">
@@ -19,7 +20,7 @@
     <a href="https://discord.gg/2PaRSu7X">
       <img alt="Join the ZenStack Cache channel" src="https://img.shields.io/discord/1035538056146595961">
     </a>
-    <a href="https://github.com/visualbravo/zenstack-cache/blob/76a2de03245c26841b04525dd8b424a8799d654c/LICENSE">
+    <a href="https://github.com/visualbravo/zenstack-cache/blob/dev/LICENSE">
       <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green">
     </a>
 
@@ -29,17 +30,18 @@
 </div>
 
 ## Features
-* 🌐 **Redis Cache:** A central cache to scale across different systems.
-* 🖥️ **Memory Cache:** A simple cache when scale is not a concern.
-* 🛟 **Type-safety:** The caching options appear in the intellisense for all read queries.
-* 🏷️ **Tag-based Invalidation:** Easily invalidate multiple related cache entries.
+
+- 🌐 **Redis Cache:** A central cache to scale across different systems.
+- 🖥️ **Memory Cache:** A simple cache when scale is not a concern.
+- 🛟 **Type-safety:** The caching options appear in the intellisense for all read queries.
+- 🏷️ **Tag-based Invalidation:** Easily invalidate multiple related cache entries.
 
 ## Requirements
 
-* ZenStack (version >= `3.3.0`)
-* Node.js (version >= `20.0.0`)
-* Redis (version >= `7.0.0`)
-  * ℹ️ Only if you intend to use the `RedisCacheProvider`
+- ZenStack (version >= `3.3.0`)
+- Node.js (version >= `20.0.0`)
+- Redis (version >= `7.0.0`)
+  - ℹ️ Only if you intend to use the `RedisCacheProvider`
 
 ## Installation
 
@@ -115,21 +117,22 @@ After performing a query, you can check where the result came from.
 const publishedPostsStatus = client.$cache.status // 'hit' | 'miss' | 'stale'
 ```
 
-* `hit` - a cache entry in the `ttl` window was found, and the database was not queried.
-* `miss` - a cache entry was not found, and the database was queried.
-* `stale` - a cache entry in the `swr` window was found, and the database was queried in the background to revalidate it.
+- `hit` - a cache entry in the `ttl` window was found, and the database was not queried.
+- `miss` - a cache entry was not found, and the database was queried.
+- `stale` - a cache entry in the `swr` window was found, and the database was queried in the background to revalidate it.
 
 ## Revalidation
 
 If the result was stale, you can choose to await its revalidation.
+
 ```typescript
 const revalidatedPublishedPosts = await client.$cache.revalidation as Post[]
 ```
 
 ## Cache Options
 
-* `ttl` reduces response times and database load by serving cached results.
-* `swr` reduces response times by serving cached results, but does not reduce database load because it performs a revalidation in the background after each request.
+- `ttl` reduces response times and database load by serving cached results.
+- `swr` reduces response times by serving cached results, but does not reduce database load because it performs a revalidation in the background after each request.
 
 > [!NOTE]
 > The total TTL of a cache entry is equal to its `ttl` + `swr`. The `ttl` window comes first, followed by the `swr` window. You can combine the two options to best suit the needs of your application.
