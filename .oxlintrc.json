@@ -1,9 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "react"
-  ],
+  "plugins": ["typescript", "react"],
   "categories": {
     "correctness": "warn",
     "pedantic": "warn",
@@ -105,9 +102,7 @@
   ],
   "overrides": [
     {
-      "files": [
-        "**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"
-      ],
+      "files": ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
       "rules": {
         "for-direction": "error",
         "no-async-promise-executor": "error",
@@ -165,9 +160,7 @@
       }
     },
     {
-      "files": [
-        "**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"
-      ],
+      "files": ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
       "env": {
         "browser": true,
         "commonjs": true,
@@ -176,12 +169,7 @@
       }
     },
     {
-      "files": [
-        "**/*.ts",
-        "**/*.tsx",
-        "**/*.mts",
-        "**/*.cts"
-      ],
+      "files": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "rules": {
         "no-class-assign": "off",
         "no-const-assign": "off",
