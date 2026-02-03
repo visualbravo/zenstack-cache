@@ -134,6 +134,21 @@ const revalidatedPublishedPosts = await client.$cache.revalidation as Post[]
 > [!NOTE]
 > The total TTL of a cache entry is equal to its `ttl` + `swr`. The `ttl` window comes first, followed by the `swr` window. You can combine the two options to best suit the needs of your application.
 
+## Caching Forever
+
+You can cache results forever by specifying neither `ttl` nor `swr`. Such results will always be considered fresh.
+
+```typescript
+client.post.findMany({
+  cache: {
+    tags: [`user:${userId}`],
+  },
+})
+```
+
+> [!WARNING]
+> Your server may eventually run out of memory if you're not careful about invalidating entries that never expire.
+
 ## License
 
 MIT

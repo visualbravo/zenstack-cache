@@ -7,7 +7,14 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
-  "keywords": ["zenstack", "cache", "caching", "prisma", "accelerate", "orm"],
+  "keywords": [
+    "zenstack",
+    "cache",
+    "caching",
+    "prisma",
+    "accelerate",
+    "orm"
+  ],
   "exports": {
     ".": {
       "@zenstack-cache/source": "./src/index.ts",
