@@ -4,5 +4,5 @@
   "typescript.experimental.useTsgo": true,
   "[javascript][javascriptreact][typescript][typescriptreact][json][jsonc]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
-  },
+  }
 }

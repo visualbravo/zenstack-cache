@@ -22,7 +22,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v5
 
-      - name: Install system dependencies  
+      - name: Install system dependencies
         run: |
           apt-get update
           apt-get install -y unzip
@@ -41,15 +41,12 @@ jobs:
           REDIS_URL: redis://redis:6379
         run: bun run test
 
-      - name: Copy extra files
-        run: cp ./README.md ./LICENSE ./packages/cache
-      
       - name: Publish package to NPM
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_CONFIG_TOKEN }}
-        run: cd ./packages/cache && bun publish --tolerate-republish --access public
+        run: bun publish --tolerate-republish --access public
 
       - name: Publish package to GitHub
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd ./packages/cache && bun publish --tolerate-republish --access public --registry https://npm.pkg.github.com
+        run: bun publish --tolerate-republish --access public --registry https://npm.pkg.github.com
