@@ -142,7 +142,7 @@ const revalidatedPublishedPosts = await client.$cache.revalidation as Post[]
 You can cache results forever by specifying neither `ttl` nor `swr`. Such results will always be considered fresh.
 
 ```typescript
-client.post.findMany({
+await client.post.findMany({
   cache: {
     tags: [`user:${userId}`],
   },
