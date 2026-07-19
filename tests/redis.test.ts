@@ -1191,4 +1191,40 @@ describe('Cache plugin (redis)', () => {
       }),
     ).resolves.toBe(true)
   })
+
+  it('invalidates correctly when there is only 1 entry', async () => {
+    let extDb = db.$use(
+      defineCachePlugin({
+        provider: new RedisCacheProvider({
+          url: process.env['REDIS_URL'] as string,
+        }),
+      }),
+    )
+
+    await extDb.user.create({
+      data: {
+        email: 'test@email.com',
+      },
+    })
+
+    await extDb.user.exists({
+      cache: {
+        tags: ['user1'],
+        ttl: 60,
+      },
+    })
+
+    await extDb.$cache.invalidate({
+      tags: ['user1'],
+    })
+
+    await extDb.user.exists({
+      cache: {
+        tags: ['user1'],
+        ttl: 60,
+      },
+    })
+
+    expect(extDb.$cache.status).toBe('miss')
+  })
 })
