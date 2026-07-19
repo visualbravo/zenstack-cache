@@ -60,7 +60,7 @@ export class RedisCacheProvider implements CacheProvider {
             })
 
             stream.on('data', async (keys: string[]) => {
-              if (keys.length > 1) {
+              if (keys.length > 0) {
                 await this.redis.del(...keys)
               }
             })
@@ -81,7 +81,7 @@ export class RedisCacheProvider implements CacheProvider {
       })
 
       stream.on('data', async (keys: string[]) => {
-        if (keys.length > 1) {
+        if (keys.length > 0) {
           await this.redis.del(...keys)
         }
       })
